@@ -1,0 +1,18 @@
+parent = "/some/parent/*"
+arr = [
+	"one",
+	"two",
+	"three"
+]
+
+[[route]]
+path   = "/some/path"
+key    = "some-key"
+verb   = "GET"
+method = "SomeMethod"
+
+[[route]]
+path   = "/random/path/:id"
+key    = "random-key"
+verb   = "GET"
+method = "RandomMethod"
