@@ -9,6 +9,8 @@ import (
 	"github.com/zenazn/goji/web"
 )
 
+type ControllerMethod func(web.C, *http.Request) (string, int)
+
 func NewApp(dir string) *App {
 	app := &App{
 		AppConfig:        NewConfig(dir + "/config.toml"),
@@ -22,7 +24,7 @@ func NewApp(dir string) *App {
 	app.Name = app.AppConfig.Get("name", false)
 
 	// default controllerMethodWrapper
-	app.ControllerMethodWrapper = func(method func(web.C, *http.Request) (string, int)) web.HandlerFunc {
+	app.ControllerMethodWrapper = func(method ControllerMethod) web.HandlerFunc {
 		fn := func(c web.C, w http.ResponseWriter, r *http.Request) {
 			c.Env["Content-Type"] = "text/html"
 
@@ -53,7 +55,7 @@ type App struct {
 	MiddlewareConfig        Config
 	Controllers             map[string]interface{}
 	Middlewares             map[string]interface{}
-	ControllerMethodWrapper func(func(web.C, *http.Request) (string, int)) web.HandlerFunc
+	ControllerMethodWrapper func(method ControllerMethod) web.HandlerFunc
 	Mux                     *web.Mux
 }
 
