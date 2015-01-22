@@ -6,13 +6,13 @@ arr = [
 ]
 
 [[route]]
-path   = "/some/path"
-key    = "some-key"
-verb   = "GET"
-method = "SomeMethod"
+path       = "/some/path"
+controller = "some-controller"
+verb       = "GET"
+method     = "SomeMethod"
 
 [[route]]
-path   = "/random/path/:id"
-key    = "random-key"
-verb   = "GET"
-method = "RandomMethod"
+path       = "/random/path/:id"
+controller = "random-controller"
+verb       = "GET"
+method     = "RandomMethod"
