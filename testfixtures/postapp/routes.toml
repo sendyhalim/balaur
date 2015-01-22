@@ -1,0 +1,13 @@
+parent = "/test/*"
+
+[[route]]
+path       = "/test/path"
+controller = "test-controller"
+verb       = "GET"
+method     = "Index"
+
+[[route]]
+path       = "/test/path/:id"
+controller = "test-controller"
+verb       = "GET"
+method     = "Get"
