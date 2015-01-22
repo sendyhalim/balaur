@@ -87,7 +87,7 @@ func (a *App) registerRoutes() {
 }
 
 func (a *App) registerMiddlewares() {
-	for _, m := range a.MiddlewareConfig.GetChildren("middlewares", false) {
+	for _, m := range a.MiddlewareConfig.GetChildren("middleware", false) {
 		key := m.Get("key", true)
 
 		a.Mux.Use(a.Middlewares[key])
