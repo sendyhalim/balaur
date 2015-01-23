@@ -2,8 +2,6 @@ package balaur
 
 import (
 	"fmt"
-	"net/http"
-	"reflect"
 
 	"github.com/fatih/color"
 	"github.com/golang/glog"
@@ -12,14 +10,14 @@ import (
 
 var neededConfigs = []string{"app", "route", "middleware"}
 
-type ControllerMethod func(web.C, *http.Request) (string, int)
-
 func NewApp(dir string, configs map[string]string) *App {
 	app := &App{
-		appConfig:   map[string]Config{},
-		Controllers: map[string]interface{}{},
-		Middlewares: map[string]interface{}{},
-		Mux:         web.New(),
+		appConfig:              map[string]Config{},
+		Controllers:            map[string]interface{}{},
+		Middlewares:            map[string]interface{}{},
+		Mux:                    web.New(),
+		AppRouteRegistrar:      NewBasicRouteRegistrar(),
+		AppMiddlewareRegistrar: NewBasicMiddlewareRegistrar(),
 	}
 
 	// load all given configs
@@ -30,28 +28,9 @@ func NewApp(dir string, configs map[string]string) *App {
 
 	app.Name = app.Config("app").Get("name", false)
 
-	// default controllerMethodWrapper
-	app.ControllerMethodWrapper = func(method ControllerMethod) web.HandlerFunc {
-		fn := func(c web.C, w http.ResponseWriter, r *http.Request) {
-			c.Env["Content-Type"] = "text/html"
-
-			response, code := method(c, r)
-
-			switch code {
-			case http.StatusOK:
-				if _, exists := c.Env["Content-Type"]; exists {
-					w.Header().Set("Content-Type", c.Env["Content-Type"].(string))
-				}
-				fmt.Fprint(w, response)
-			case http.StatusSeeOther:
-				http.Redirect(w, r, response, code)
-			}
-		}
-		return web.HandlerFunc(fn)
-	}
-
 	return app
 }
+
 func checkNeededConfigs(configs map[string]string) {
 	for _, k := range neededConfigs {
 		_, ok := configs[k]
@@ -68,6 +47,8 @@ type App struct {
 	Middlewares             map[string]interface{}
 	ControllerMethodWrapper func(method ControllerMethod) web.HandlerFunc
 	Mux                     *web.Mux
+	AppRouteRegistrar       RouteRegistrar
+	AppMiddlewareRegistrar  MiddlewareRegistrar
 
 	appConfig map[string]Config
 }
@@ -91,34 +72,10 @@ func (a *App) Config(section string) Config {
 
 func (a *App) registerRoutes() {
 	conf := a.Config("route")
-
-	for _, r := range conf.GetChildren("route", false) {
-		controller := r.Get("controller", true)
-		method := r.Get("method", true)
-		verb := r.Get("verb", true)
-		path := r.Get("path", true)
-		methodInterface := reflect.ValueOf(a.Controllers[controller]).MethodByName(method).Interface()
-		handler := a.ControllerMethodWrapper(methodInterface.(func(web.C, *http.Request) (string, int)))
-
-		switch verb {
-		case "GET":
-			a.Mux.Get(path, handler)
-		case "POST":
-			a.Mux.Post(path, handler)
-		case "PUT":
-			a.Mux.Put(path, handler)
-		case "DELETE":
-			a.Mux.Delete(path, handler)
-		}
-	}
+	a.AppRouteRegistrar.RegisterRoutes(a.Mux, conf.GetChildren("route", false), a.Controllers)
 }
 
 func (a *App) registerMiddlewares() {
 	conf := a.Config("middleware")
-
-	for _, m := range conf.GetChildren("middleware", false) {
-		key := m.Get("key", true)
-
-		a.Mux.Use(a.Middlewares[key])
-	}
+	a.AppMiddlewareRegistrar.RegisterMiddlewares(a.Mux, conf.GetChildren("middleware", false), a.Middlewares)
 }
