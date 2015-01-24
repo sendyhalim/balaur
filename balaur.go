@@ -35,7 +35,7 @@ func checkNeededConfigs(configs map[string]string) {
 	for _, k := range neededConfigs {
 		_, ok := configs[k]
 		if !ok {
-			glog.Fatalf("Please set config for %s")
+			glog.Fatalf("Please set config for %s", k)
 		}
 	}
 }
