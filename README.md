@@ -1,5 +1,8 @@
 #Balaur
-Simple app container for [goji](https://github.com/zenazn/goji) app
+An app container for [goji](https://github.com/zenazn/goji) app
+
+[![Build Status](https://travis-ci.org/sendyhalim/balaur.svg)](https://travis-ci.org/sendyhalim/balaur)
+
 
 #Usage
 For example I have a web app and it has 2 parts, user and blog, with `balaur` it would be like this:
