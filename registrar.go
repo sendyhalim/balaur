@@ -5,10 +5,11 @@ import (
 	"net/http"
 	"reflect"
 
+	"github.com/sendyhalim/balaur/context"
 	"github.com/zenazn/goji/web"
 )
 
-type ControllerMethod func(web.C, *http.Request) (string, int)
+type ControllerMethod func(context.ContextInterface, *http.Request) (string, int)
 
 type RouteRegistrar interface {
 	RegisterRoutes(*web.Mux, []Config, map[string]interface{})
@@ -29,7 +30,7 @@ func (r *BasicRouteRegistrar) RegisterRoutes(mux *web.Mux, routes []Config, cont
 		verb := config.Get("verb", true)
 		path := config.Get("path", true)
 		methodInterface := reflect.ValueOf(controllers[controller]).MethodByName(method).Interface()
-		methodValue := methodInterface.(func(web.C, *http.Request) (string, int))
+		methodValue := methodInterface.(func(context.ContextInterface, *http.Request) (string, int))
 		handler := r.ControllerMethodWrapper(methodValue)
 
 		switch verb {
@@ -67,8 +68,7 @@ func NewBasicRouteRegistrar() *BasicRouteRegistrar {
 	r.ControllerMethodWrapper = func(method ControllerMethod) web.HandlerFunc {
 		fn := func(c web.C, w http.ResponseWriter, r *http.Request) {
 			c.Env["Content-Type"] = "text/html"
-
-			response, code := method(c, r)
+			response, code := method(&context.GojiContext{C: &c}, r)
 
 			switch code {
 			case http.StatusOK:
