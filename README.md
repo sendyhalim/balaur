@@ -122,5 +122,9 @@ func main() {
 }
 ```
 
+# TODOs
+* Add readme example how to use different registrars and controllers
+* API documentation
+
 # Notes
 for now `balaur` only use `toml` as config, but it will support more config types in the future (such as json)
