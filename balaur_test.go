@@ -14,7 +14,7 @@ import (
 func TestApp(t *testing.T) {
 	Convey("Test App", t, func() {
 		ctrl := postapp.Ctrl{}
-		app := NewApp(testfixtures.TestAppPath, testfixtures.TestAppConfigPath)
+		app := NewApp(testfixtures.TestAppPath, testfixtures.TestAppConfigPath, nil, nil)
 
 		app.Controllers["test-controller"] = ctrl
 		app.Middlewares["test-middleware"] = postapp.TestMiddleware

@@ -10,14 +10,22 @@ import (
 
 var neededConfigs = []string{"app", "route", "middleware"}
 
-func NewApp(dir string, configs map[string]string) *App {
+func NewApp(dir string, configs map[string]string, rr RouteRegistrar, mr MiddlewareRegistrar) *App {
 	app := &App{
 		appConfig:              map[string]Config{},
 		Controllers:            map[string]interface{}{},
 		Middlewares:            map[string]interface{}{},
 		Mux:                    web.New(),
-		AppRouteRegistrar:      NewBasicRouteRegistrar(),
-		AppMiddlewareRegistrar: NewBasicMiddlewareRegistrar(),
+		AppRouteRegistrar:      rr,
+		AppMiddlewareRegistrar: mr,
+	}
+
+	if rr == nil {
+		app.AppRouteRegistrar = NewBasicRouteRegistrar()
+	}
+
+	if mr == nil {
+		app.AppMiddlewareRegistrar = NewBasicMiddlewareRegistrar()
 	}
 
 	// load all given configs
