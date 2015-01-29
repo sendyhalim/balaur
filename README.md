@@ -25,7 +25,7 @@ For example I have a web app and it has 2 parts, user and blog, with `balaur` it
 user `app.go` should handle creation of user app and `boot` the app (the same applies to `blog`)
 
 here's what the basic app should look like
-```
+```go
 package user
 import (
 	"github.com/sendyhalim/balaur"
@@ -78,8 +78,8 @@ controller = "user"
 method     = "Get"
 ```
 
-** User `controller.go` ***
-```
+**User `controller.go`**
+```go
 package user
 
 import (
@@ -100,8 +100,8 @@ func (a *UserController) Get(c context.ContextInterface, r *http.Request) (strin
 
 ```
 
-then in  `main.go`
-```
+then in `main.go`
+```go
 package main
 
 import (
