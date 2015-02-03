@@ -1,7 +1,17 @@
 #Balaur
 An app container for [goji](https://github.com/zenazn/goji) app
 
+[![GoDoc](https://godoc.org/github.com/sendyhalim/balaur/web?status.svg)](https://godoc.org/github.com/sendyhalim/balaur)
 [![Build Status](https://travis-ci.org/sendyhalim/balaur.svg)](https://travis-ci.org/sendyhalim/balaur)
+
+#Table of contents
+- [Balaur](#balaur)
+- [Usage](#usage)
+- [Custom](#custom)
+    - [RouteRegistrar](#route-registrar)
+    - [MiddlewareRegistrar](#middleware-registrar)
+- [TODOs](#todos)
+- [Notes](#notes)
 
 
 #Usage
@@ -122,9 +132,100 @@ func main() {
 }
 ```
 
+#Custom
+
+##Route Registrar
+You can inject your own route registrar by creating custom registrar and inject it(3rd param) when you use `balaur.NewApp()`.
+```go
+type RouteRegistrar interface {
+	// 1st param is goji Mux
+	// 2nd param is routes config (balaur already convert routes config as Config interface)
+	// 3rd param is the mapping of app controllers
+	RegisterRoutes(*web.Mux, []Config, map[string]interface{})
+}
+```
+
+By creating your own custom route registrar, you can gain full flexibility on controller methods.
+Here's `balaur.BasicRouteRegistrar` code ([full](https://github.com/sendyhalim/balaur/blob/master/registrar.go))
+```go
+type ControllerMethod func(context.ContextInterface, *http.Request) (string, int)
+
+type BasicRouteRegistrar struct {
+	// ControllerMethodWrapper is assigned when NewBasicRouteRegistrar() is called
+	ControllerMethodWrapper func(ControllerMethod) web.HandlerFunc
+}
+
+func (r *BasicRouteRegistrar) RegisterRoutes(mux *web.Mux, routes []Config, controllers map[string]interface{}) {
+	for _, config := range routes {
+		controller := config.Get("controller", true)
+		method := config.Get("method", true)
+		verb := config.Get("verb", true)
+		path := config.Get("path", true)
+		methodInterface := reflect.ValueOf(controllers[controller]).MethodByName(method).Interface()
+		methodValue := methodInterface.(func(context.ContextInterface, *http.Request) (string, int))
+		handler := r.ControllerMethodWrapper(methodValue)
+
+		switch verb {
+		case "GET":
+			mux.Get(path, handler)
+		case "POST":
+			mux.Post(path, handler)
+		case "PUT":
+			mux.Put(path, handler)
+		case "DELETE":
+			mux.Delete(path, handler)
+		}
+	}
+}
+```
+As you can see by creating custom registrar, you can also modify controller methods type. If you only want to use different context (by default goji context is used), just do this
+```go
+var routeRegistrar *BasicRouteRegistrar = balaur.NewBasicRouteRegistrar()
+routeRegistrar.ControllerMethodWrapper = func(method balaur.ControllerMethod) web.HandlerFunc {
+	fn := func(c web.C, w http.ResponseWriter, r *http.Request) {
+		// as long as it conforms context.ContextInterface, then you can inject any 
+		// custom context to  BasicRouteRegistrar's  ControllerMethod
+		response, code := method(&GorillaContext, r)
+		// do something else..
+	}
+	return web.HandlerFunc(fn)	
+}
+
+// create app and inject routeRegistrar manually
+var app = balaur.NewApp("user", map[string]string{
+		"app":        "config.toml",
+		"route":      "routes.toml",
+		"middleware": "middlewares.toml",
+}, routeRegistrar, nil)
+```
+
+##Middleware Registrar
+You can inject your own middleware registrar by creating custom registrar and inject it (4th param) when you use `balaur.NewApp()`.
+```go
+type MiddlewareRegistrar interface {
+	// 1st param is goji Mux
+	// 2nd param is middlewares config (balaur already convert middlewares config as Config interface)
+	// 3rd param is the mapping of app controllers
+	RegisterMiddlewares(*web.Mux, []Config, map[string]interface{})
+}
+```
+
+`BasicMiddlewareRegistrar` is really simple, it just maps the middleware config based on its index
+
+```go
+type BasicMiddlewareRegistrar struct {}
+
+func (r *BasicMiddlewareRegistrar) RegisterMiddlewares(mux *web.Mux, middlewareConfigs []Config, middlewares map[string]interface{}) {
+	for _, m := range middlewareConfigs {
+		key := m.Get("key", true)
+
+		mux.Use(middlewares[key])
+	}
+}
+```
+
 # TODOs
-* Add readme example how to use different registrars and controllers
-* API documentation
+* Better API documentation
 
 # Notes
 for now `balaur` only use `toml` as config, but it will support more config types in the future (such as json)
