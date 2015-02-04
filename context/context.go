@@ -6,6 +6,6 @@ import (
 
 type ContextInterface interface {
 	GetParam(string) string
-	Get(*http.Request, string) interface{}
-	Set(*http.Request, string, interface{})
+	Get(*http.Request, interface{}) interface{}
+	Set(*http.Request, interface{}, interface{})
 }

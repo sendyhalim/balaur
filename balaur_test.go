@@ -41,7 +41,7 @@ func TestApp(t *testing.T) {
 
 func newContext() web.C {
 	return web.C{
-		Env:       map[string]interface{}{},
+		Env:       map[interface{}]interface{}{},
 		URLParams: map[string]string{},
 	}
 }
