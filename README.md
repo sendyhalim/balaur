@@ -226,6 +226,7 @@ func (r *BasicMiddlewareRegistrar) RegisterMiddlewares(mux *web.Mux, middlewareC
 
 # TODOs
 * Better API documentation
+* Scaffolding tools (automatic app generation e.g `balaur mkapp blog` then create the basic templates inside the given dir)
 
 # Notes
 for now `balaur` only use `toml` as config, but it will support more config types in the future (such as json)
