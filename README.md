@@ -15,6 +15,9 @@ An app container for [goji](https://github.com/zenazn/goji) app
 
 
 #Usage
+**NOTE** 
+You don't have to follow this structure, you are free to define your own structure, this structure is just my convention
+
 For example I have a web app and it has 2 parts, user and blog, with `balaur` it would be like this:
 
 **Structure**
