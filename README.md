@@ -3,6 +3,7 @@ An app container for [goji](https://github.com/zenazn/goji) app
 
 [![GoDoc](https://godoc.org/github.com/sendyhalim/balaur/web?status.svg)](https://godoc.org/github.com/sendyhalim/balaur)
 [![Build Status](https://travis-ci.org/sendyhalim/balaur.svg)](https://travis-ci.org/sendyhalim/balaur)
+[![views](https://sourcegraph.com/api/repos/github.com/sendyhalim/balaur/.counters/views.png)](https://sourcegraph.com/github.com/sendyhalim/balaur)
 
 #Table of contents
 - [Balaur](#balaur)
