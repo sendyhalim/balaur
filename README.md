@@ -1,9 +1,10 @@
 #Balaur
 An app container for [goji](https://github.com/zenazn/goji) app
 
-[![GoDoc](https://godoc.org/github.com/sendyhalim/balaur/web?status.svg)](https://godoc.org/github.com/sendyhalim/balaur)
 [![Build Status](https://travis-ci.org/sendyhalim/balaur.svg)](https://travis-ci.org/sendyhalim/balaur)
+[![GoDoc](https://godoc.org/github.com/sendyhalim/balaur/web?status.svg)](https://godoc.org/github.com/sendyhalim/balaur)
 [![views](https://sourcegraph.com/api/repos/github.com/sendyhalim/balaur/.counters/views.png)](https://sourcegraph.com/github.com/sendyhalim/balaur)
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/sendyhalim/balaur/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 #Table of contents
 - [Balaur](#balaur)
@@ -234,3 +235,6 @@ func (r *BasicMiddlewareRegistrar) RegisterMiddlewares(mux *web.Mux, middlewareC
 
 # Notes
 for now `balaur` only use `toml` as config, but it will support more config types in the future (such as json)
+
+# Support
+I will always improve and support this project as I'm using `balaur` for most of my projects.
