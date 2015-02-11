@@ -4,7 +4,6 @@ An app container for [goji](https://github.com/zenazn/goji) app
 [![Build Status](https://travis-ci.org/sendyhalim/balaur.svg)](https://travis-ci.org/sendyhalim/balaur)
 [![GoDoc](https://godoc.org/github.com/sendyhalim/balaur/web?status.svg)](https://godoc.org/github.com/sendyhalim/balaur)
 [![views](https://sourcegraph.com/api/repos/github.com/sendyhalim/balaur/.counters/views.png)](https://sourcegraph.com/github.com/sendyhalim/balaur)
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/sendyhalim/balaur/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 #Table of contents
 - [Balaur](#balaur)
